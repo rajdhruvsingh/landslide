@@ -138,6 +138,9 @@ class ModelConfig:
     gap_days: int = 30
     min_train_size: int = 100
 
+    # Operational evaluation
+    lead_time_days: int = 1
+
     # Calibration
     calibrate: bool = True
     calibration_method: str = "isotonic"  # "isotonic" or "sigmoid"
@@ -362,7 +365,7 @@ def walk_forward_cv(
     # TimeSeriesSplit with gap
     tscv = TimeSeriesSplit(n_splits=config.n_splits, gap=config.gap_days)
 
-    fold_metrics = []
+    fold_metrics_list = []
 
     for fold, (train_idx, test_idx) in enumerate(tscv.split(X)):
         if len(train_idx) < config.min_train_size:
@@ -408,7 +411,9 @@ def walk_forward_cv(
 
         # Operational metrics
         if y_prob is not None:
-            fold_metrics.update(evaluate_operational(y_test, y_prob, config=config))
+            fold_metrics.update(
+                evaluate_operational(y_test, y_prob, lead_time_days=config.lead_time_days)
+            )
 
         # Feature importance (last fold only)
         if fold == config.n_splits - 1 and feature_names:
@@ -421,11 +426,6 @@ def walk_forward_cv(
                 final_estimator, feature_names
             )
 
-        fold_metrics = fold_metrics
-        fold_metrics = fold_metrics
-        fold_metrics = fold_metrics
-        fold_metrics = fold_metrics
-        fold_metrics_list = fold_metrics
         fold_metrics_list.append(fold_metrics)
 
     return fold_metrics_list

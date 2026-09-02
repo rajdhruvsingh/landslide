@@ -157,9 +157,9 @@ class SoilMoistureClient:
 
             # Merge GWETROOT and GWETTOP by date
             gwetroot = param_data.get("GWETROOT", {})
-            gwetroot = param_data.get("GWETTOP", {})
+            gwettop = param_data.get("GWETTOP", {})
 
-            all_dates = set(gwetroot.keys()) | set(gwetroot.keys())
+            all_dates = set(gwetroot.keys()) | set(gwettop.keys())
 
             for date_str in all_dates:
                 try:
@@ -167,7 +167,7 @@ class SoilMoistureClient:
 
                     # Use root zone if available, else surface
                     root_val = gwetroot.get(date_str, -999)
-                    top_val = gwetroot.get(date_str, -999)
+                    top_val = gwettop.get(date_str, -999)
 
                     # Prefer root zone, fallback to surface
                     val = root_val if root_val > -900 else top_val
