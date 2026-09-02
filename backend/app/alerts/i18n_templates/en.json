@@ -1,6 +1,0 @@
-{
-  "high_risk_alert": "ALERT: Landslide risk in {zone_name} is HIGH. {explanation}. Stay away from slopes. Report to district administration.",
-  "severe_risk_alert": "URGENT: Landslide risk in {zone_name} is SEVERE. {explanation}. Evacuate slopes immediately. Contact district disaster management.",
-  "low_risk_info": "UPDATE: Landslide risk in {zone_name} is Low. No immediate action required.",
-  "moderate_risk_info": "UPDATE: Landslide risk in {zone_name} is Moderate. Stay vigilant and monitor local conditions."
-}
