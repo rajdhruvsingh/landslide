@@ -129,6 +129,20 @@ REST_FRAMEWORK = {
 # Celery
 CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+CELERY_BEAT_SCHEDULE = {
+    "ingest-rainfall-3h": {
+        "task": "apps.ml_bridge.tasks.ingest_rainfall",
+        "schedule": 10800.0,
+    },
+    "ingest-soil-moisture-daily": {
+        "task": "apps.ml_bridge.tasks.ingest_soil_moisture",
+        "schedule": 86400.0,
+    },
+    "recompute-risk-daily": {
+        "task": "apps.ml_bridge.tasks.recompute_risk",
+        "schedule": 86400.0,
+    },
+}
 
 # SMS Gateway
 SMS_GATEWAY_MOCK = os.environ.get("SMS_GATEWAY_MOCK", "True").lower() in (
