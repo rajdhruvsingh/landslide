@@ -1,6 +1,10 @@
 from rest_framework import viewsets, status
+from rest_framework import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from drf_spectacular.utils import extend_schema, inline_serializer
+
 from .models import WeatherReading
 from .serializers import WeatherReadingSerializer
 
@@ -10,6 +14,36 @@ class WeatherReadingViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = WeatherReadingSerializer
 
 
+@extend_schema(
+    parameters=[
+        inline_serializer(
+            name="ForecastParams",
+            fields={"zone_id": serializers.IntegerField()},
+        )
+    ],
+    responses={
+        200: inline_serializer(
+            name="WeatherForecast",
+            fields={
+                "zone_id": serializers.IntegerField(),
+                "forecast": serializers.ListField(
+                    child=inline_serializer(
+                        name="ForecastDay",
+                        fields={
+                            "date": serializers.CharField(),
+                            "rainfall_mm": serializers.FloatField(allow_null=True),
+                            "soil_moisture_pct": serializers.FloatField(
+                                allow_null=True
+                            ),
+                            "source": serializers.CharField(),
+                        },
+                    )
+                ),
+            },
+        ),
+        400: None,
+    },
+)
 @api_view(["GET"])
 def weather_forecast(request):
     """IMD-linked forecast for a zone."""

@@ -1,7 +1,9 @@
-from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from apps.users.permissions import IsStaffOrAdmin
 from .models import Alert
 from .serializers import AlertSerializer
 
@@ -9,6 +11,16 @@ from .serializers import AlertSerializer
 class AlertViewSet(viewsets.ModelViewSet):
     queryset = Alert.objects.select_related("zone").all()
     serializer_class = AlertSerializer
+
+    def get_permissions(self):
+        # Manual dispatch is an admin/district-officer override.
+        if self.action == "dispatch_alert":
+            return [IsStaffOrAdmin()]
+        # Creating/editing/deleting alerts are admin/district-officer only.
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return [IsStaffOrAdmin()]
+        # Any authenticated user may read alerts.
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         qs = super().get_queryset()

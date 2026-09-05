@@ -1,8 +1,32 @@
-from django.db.models import Count, Q
+from django.db.models import Count
+from rest_framework import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from drf_spectacular.utils import extend_schema, inline_serializer
 
+
+@extend_schema(
+    responses={
+        200: inline_serializer(
+            name="DashboardSummary",
+            fields={
+                "total_zones": serializers.IntegerField(),
+                "risk_counts": inline_serializer(
+                    name="RiskCounts",
+                    fields={
+                        "Low": serializers.IntegerField(),
+                        "Moderate": serializers.IntegerField(),
+                        "High": serializers.IntegerField(),
+                        "Severe": serializers.IntegerField(),
+                    },
+                ),
+                "active_alerts": serializers.IntegerField(),
+                "reports_pending": serializers.IntegerField(),
+            },
+        )
+    }
+)
 @api_view(["GET"])
 def dashboard_summary(request):
     """Aggregated stats: risk severity counts, road status, forecast."""

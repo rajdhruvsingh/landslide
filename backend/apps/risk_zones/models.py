@@ -8,7 +8,6 @@ if settings.GIS_AVAILABLE:
     _PolygonField = gis_models.PolygonField
     _PointField = gis_models.PointField
 else:
-
     class _PolygonField(models.JSONField):
         def __init__(self, *args, srid=4326, **kwargs):
             super().__init__(*args, **kwargs)

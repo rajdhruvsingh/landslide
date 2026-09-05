@@ -8,7 +8,8 @@ class FieldReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = FieldReport
         fields = "__all__"
-        read_only_fields = ["submitted_at"]
+        # user is tied to the authenticated request, never client-supplied
+        read_only_fields = ["submitted_at", "user"]
 
 
 class FieldReportListSerializer(serializers.ModelSerializer):
