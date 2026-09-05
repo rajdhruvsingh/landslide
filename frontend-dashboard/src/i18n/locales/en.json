@@ -1,0 +1,65 @@
+{
+  "app": {
+    "title": "Landslide Early Warning System",
+    "subtitle": "District Authority Dashboard",
+    "logout": "Logout",
+    "refresh": "Refresh data"
+  },
+  "login": {
+    "title": "Sign in to the dashboard",
+    "phone": "Phone number",
+    "otp": "OTP",
+    "submit": "Sign in",
+    "hint": "Dev-only stub: any phone number with OTP 000000 or test-otp.",
+    "errorDefault": "Login failed. Check your phone number and OTP."
+  },
+  "nav": {
+    "map": "Risk Map",
+    "reports": "Field Reports",
+    "alerts": "Alerts Console"
+  },
+  "summary": {
+    "totalZones": "Total zones",
+    "riskDistribution": "Risk distribution",
+    "activeAlerts": "Active alerts",
+    "pendingReports": "Pending reports"
+  },
+  "map": {
+    "loading": "Loading risk zones…",
+    "error": "Could not load risk zones.",
+    "selectHint": "Select a zone on the map to see its risk explanation."
+  },
+  "zone": {
+    "riskLevel": "Risk level",
+    "explanationTitle": "Why this zone is at risk",
+    "explanationEmpty": "No explanation is available for this zone yet.",
+    "thresholdsTitle": "Thresholds checked",
+    "readingsTitle": "Recent weather readings",
+    "close": "Close",
+    "loading": "Loading explanation…",
+    "error": "Could not load the explanation for this zone."
+  },
+  "reports": {
+    "title": "Field reports",
+    "filterAll": "All",
+    "filterSynced": "Synced",
+    "filterPending": "Pending",
+    "filterConflict": "Conflict",
+    "noResults": "No reports match.",
+    "status_synced": "Synced",
+    "status_pending": "Pending",
+    "status_conflict": "Conflict"
+  },
+  "alerts": {
+    "title": "Alerts console",
+    "noAlerts": "No alerts yet."
+  },
+  "common": {
+    "reporter": "Reporter",
+    "reportType": "Type",
+    "submittedAt": "Submitted",
+    "origin": "Origin",
+    "channel": "Channel",
+    "dispatchedAt": "Dispatched"
+  }
+}

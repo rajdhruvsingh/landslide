@@ -54,8 +54,12 @@ ml-notebooks/.ipynb_checkpoints/
 htmlcov/
 .pytest_cache/
 
+# Local demo databases (SQLite override in config/settings_e2e.py)
+*.sqlite3
+
 # Rust/Build
 target/
 
 # Docker volumes
 docker-compose.override.yml
+backend/celerybeat-schedule*

@@ -1,0 +1,65 @@
+{
+  "app": {
+    "title": "भूस्खलन प्रारंभिक चेतावनी प्रणाली",
+    "subtitle": "जिला प्राधिकरण डैशबोर्ड",
+    "logout": "लॉग आउट",
+    "refresh": "डेटा रीफ़्रेश करें"
+  },
+  "login": {
+    "title": "डैशबोर्ड में साइन इन करें",
+    "phone": "फ़ोन नंबर",
+    "otp": "ओटीपी",
+    "submit": "साइन इन",
+    "hint": "केवल विकास स्टब: किसी भी फ़ोन नंबर के साथ OTP 000000 या test-otp।",
+    "errorDefault": "लॉगिन विफल। फ़ोन नंबर और ओटीपी जाँचें।"
+  },
+  "nav": {
+    "map": "जोखिम नक्शा",
+    "reports": "फ़ील्ड रिपोर्ट",
+    "alerts": "अलर्ट कंसोल"
+  },
+  "summary": {
+    "totalZones": "कुल क्षेत्र",
+    "riskDistribution": "जोखिम वितरण",
+    "activeAlerts": "सक्रिय अलर्ट",
+    "pendingReports": "लंबित रिपोर्ट"
+  },
+  "map": {
+    "loading": "जोखिम क्षेत्र लोड हो रहे हैं…",
+    "error": "जोखिम क्षेत्र लोड नहीं हो सके।",
+    "selectHint": "जोखिम की व्याख्या देखने के लिए नक्शे पर कोई क्षेत्र चुनें।"
+  },
+  "zone": {
+    "riskLevel": "जोखिम स्तर",
+    "explanationTitle": "यह क्षेत्र जोखिम में क्यों है",
+    "explanationEmpty": "इस क्षेत्र के लिए अभी कोई व्याख्या उपलब्ध नहीं है।",
+    "thresholdsTitle": "जाँचे गए थ्रेसहोल्ड",
+    "readingsTitle": "हाल की मौसम रीडिंग",
+    "close": "बंद करें",
+    "loading": "व्याख्या लोड हो रही है…",
+    "error": "इस क्षेत्र की व्याख्या लोड नहीं हो सकी।"
+  },
+  "reports": {
+    "title": "फ़ील्ड रिपोर्ट",
+    "filterAll": "सभी",
+    "filterSynced": "समक्रमित",
+    "filterPending": "लंबित",
+    "filterConflict": "विरोध",
+    "noResults": "कोई रिपोर्ट मेल नहीं खाती।",
+    "status_synced": "समक्रमित",
+    "status_pending": "लंबित",
+    "status_conflict": "विरोध"
+  },
+  "alerts": {
+    "title": "अलर्ट कंसोल",
+    "noAlerts": "अभी कोई अलर्ट नहीं है।"
+  },
+  "common": {
+    "reporter": "रिपोर्टर",
+    "reportType": "प्रकार",
+    "submittedAt": "प्रस्तुत",
+    "origin": "उत्पत्ति",
+    "channel": "चैनल",
+    "dispatchedAt": "जारी किया गया"
+  }
+}
