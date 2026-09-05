@@ -69,12 +69,23 @@ def ingest_soil_moisture():
 
 @celery_app.task(name="apps.ml_bridge.tasks.recompute_risk")
 def recompute_risk():
-    """Run the full ingestion + ML feature generation + risk recomputation pipeline."""
-    from apps.ml_bridge.ingestion.pipeline import run_ingestion_pipeline_sync
+    """Recompute baseline risk levels for all monitored zones.
+
+    Uses the always-active published threshold model over the latest stored
+    weather readings and persists the result back onto each RiskZone
+    (current_risk_level / last_computed_at). Fast, deterministic and offline.
+
+    The full dataset-builder pipeline remains available as
+    ``apps.ml_bridge.ingestion.pipeline.run_ingestion_pipeline_sync`` for
+    Phase-2 ML feature generation; it is intentionally not wired into the
+    operational recompute path.
+    """
+    from apps.ml_bridge.risk_evaluator import recompute_zone_risks
 
     try:
-        result = run_ingestion_pipeline_sync()
-        logger.info("Risk recomputation completed: %s", result.get("status"))
+        result = recompute_zone_risks()
+        updated = [z for z in result["zones"] if z.get("updated")]
+        logger.info("Risk recomputation completed: %d zones updated", len(updated))
         return result
     except Exception as e:
         logger.exception("Risk recomputation failed")
