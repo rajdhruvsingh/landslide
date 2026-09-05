@@ -1,19 +1,32 @@
-from django.db.models import Count
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 from rest_framework.response import Response
+
+from apps.users.permissions import IsAdmin
 from .models import RiskZone, HistoricalLandslide
 from .serializers import (
     RiskZoneSerializer,
     HistoricalLandslideSerializer,
     RiskZoneHistorySerializer,
-    RiskZoneExplanationSerializer,
 )
 
 
-class RiskZoneViewSet(viewsets.ReadOnlyModelViewSet):
+class RiskZoneViewSet(viewsets.ModelViewSet):
+    """Risk zones are read-only for every authenticated user.
+
+    Write endpoints exist but are restricted to district/state admins as a
+    safeguard; risk data is normally written by the ML pipeline/Celery
+    tasks directly through the ORM, not via the API.
+    """
+
     queryset = RiskZone.objects.all()
     serializer_class = RiskZoneSerializer
+
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:
+            return [IsAuthenticated()]
+        return [IsAdmin()]
 
     @action(detail=True, methods=["get"], url_path="history")
     def history(self, request, pk=None):
@@ -27,6 +40,7 @@ class RiskZoneViewSet(viewsets.ReadOnlyModelViewSet):
         from apps.ml_bridge.ml.threshold_model import (
             check_threshold_exceedance,
             format_explanation,
+            select_best_result,
         )
         from apps.weather.models import WeatherReading
 
@@ -34,19 +48,20 @@ class RiskZoneViewSet(viewsets.ReadOnlyModelViewSet):
             "-reading_time"
         )[:10]
         thresholds_checked = []
+        results = []
         actual_readings = []
 
         for r in readings:
             if r.rainfall_mm is not None:
                 result = check_threshold_exceedance(
-                    rainfall_mm=r.rainfall_mm,
-                    duration_hours=24,
+                    cumulative_rainfall_mm=r.rainfall_mm,
+                    duration_hours=48,
                     region="ne_himalaya",
                 )
-                if result:
-                    thresholds_checked.append(
-                        {"date": r.reading_time.isoformat(), "threshold": result}
-                    )
+                thresholds_checked.append(
+                    {"date": r.reading_time.isoformat(), "threshold": result.to_dict()}
+                )
+                results.append(result)
             actual_readings.append(
                 {
                     "date": r.reading_time.isoformat() if r.reading_time else None,
@@ -55,7 +70,11 @@ class RiskZoneViewSet(viewsets.ReadOnlyModelViewSet):
                 }
             )
 
-        explanation_text = format_explanation(thresholds_checked)
+        # The headline explanation comes from the single most extreme check —
+        # shared with apps.ml_bridge.risk_evaluator via select_best_result.
+        explanation_text = (
+            format_explanation(select_best_result(results)) if results else ""
+        )
 
         return Response(
             {
@@ -72,3 +91,4 @@ class RiskZoneViewSet(viewsets.ReadOnlyModelViewSet):
 class HistoricalLandslideViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = HistoricalLandslide.objects.all()
     serializer_class = HistoricalLandslideSerializer
+    permission_classes = [IsAuthenticated]

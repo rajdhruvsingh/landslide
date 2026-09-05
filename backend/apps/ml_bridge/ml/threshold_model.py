@@ -225,6 +225,30 @@ def check_threshold_exceedance(
 # ---------------------------------------------------------------------------
 
 
+def select_best_result(results: list[ThresholdResult]) -> ThresholdResult:
+    """Pick the single threshold check that should headline an explanation.
+
+    Preference order:
+      1. a triggered (exceeded) check with the highest positive margin, else
+      2. the check closest to the threshold (least-negative margin).
+
+    Raising over a per-reading threshold is what drives the risk level, so
+    the "best" check is the most extreme comparison, not the newest one.
+
+    Args:
+        results: Non-empty list of ThresholdResult objects.
+
+    Returns:
+        The ThresholdResult to headline the explanation.
+
+    Raises:
+        ValueError: If ``results`` is empty.
+    """
+    if not results:
+        raise ValueError("results must not be empty")
+    return max(results, key=lambda r: r.margin)
+
+
 def format_explanation(result: ThresholdResult) -> str:
     """Generate a human-readable explanation from a ThresholdResult.
 
