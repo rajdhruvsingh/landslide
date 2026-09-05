@@ -21,7 +21,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
     "rest_framework",
+    "drf_spectacular",
     "apps.risk_zones",
     "apps.reports",
     "apps.alerts",
@@ -33,7 +35,7 @@ INSTALLED_APPS = [
 # GeoDjango: enable django.contrib.gis only when GDAL is available
 # (present in Docker/production, absent on some dev machines)
 try:
-    import gdal  # noqa: F401
+    from osgeo import gdal  # noqa: F401
 
     INSTALLED_APPS.insert(5, "django.contrib.gis")
     GIS_AVAILABLE = True
@@ -42,6 +44,7 @@ except ImportError:
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -117,13 +120,41 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# CORS: allow the Vite dev server and common dev ports by default.
+# Override with the CORS_ALLOWED_ORIGINS env var (comma-separated) in
+# production — never use a wildcard here.
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:5173,http://localhost:3000",
+).split(",")
+
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "apps.users.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 50,
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",
     ],
+}
+
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES = int(
+    os.environ.get("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "60")
+)
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Landslide EWS API",
+    "DESCRIPTION": "SIH26001 Landslide Early Warning System - backend API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
 
 # Celery
